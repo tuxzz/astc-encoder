@@ -19,7 +19,7 @@
 
 #include "astc_codec_internals.h"
 
-#include <math.h>
+#include <cmath>
 #include "mathlib.h"
 #include "softfloat.h"
 
@@ -27,7 +27,7 @@ float4 *** input_averages;
 float  *** input_alpha_averages;
 float4 *** input_variances;
 
-#include <stdio.h>
+#include <cstdio>
 
 // routine to compute averages and variances for a pixel region.
 // The routine computes both in a single pass, using a summed-area table

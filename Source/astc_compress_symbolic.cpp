@@ -16,19 +16,19 @@
 #include "astc_codec_internals.h"
 
 #include "softfloat.h"
-#include <math.h>
-#include <string.h>
-#include <stdio.h>
+#include <cmath>
+#include <cstring>
+#include <cstdio>
 
 #ifdef DEBUG_CAPTURE_NAN
 	#ifndef _GNU_SOURCE
 		#define _GNU_SOURCE
 	#endif
 
-	#include <fenv.h>
+	#include <cfenv>
 #endif
 
-#include <stdio.h>
+#include <cstdio>
 
 int realign_weights(astc_decode_mode decode_mode,
 					int xdim, int ydim, int zdim, const imageblock * blk, const error_weight_block * ewb, symbolic_compressed_block * scb, uint8_t * weight_set8, uint8_t * plane2_weight_set8)

@@ -15,10 +15,10 @@
 #include "astc_codec_internals.h"
 
 #ifdef DEBUG_PRINT_DIAGNOSTICS
-	#include <stdio.h>
+	#include <cstdio>
 #endif
 
-#include <math.h>
+#include <cmath>
 
 // clamp an input value to [0,1]; Nan is turned into 0.
 static inline float clamp01(float val)

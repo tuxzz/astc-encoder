@@ -20,9 +20,9 @@
 /*----------------------------------------------------------------------------*/ 
 #include "astc_codec_internals.h"
 
-#include <stdio.h>
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstdio>
+#include <cstdint>
+#include <cstdlib>
 
 #include "softfloat.h"
 

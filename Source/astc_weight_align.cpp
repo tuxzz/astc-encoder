@@ -37,11 +37,11 @@
  */ 
 /*----------------------------------------------------------------------------*/ 
 
-#include <math.h>
+#include <cmath>
 #include "astc_codec_internals.h"
 
 #ifdef DEBUG_PRINT_DIAGNOSTICS
-	#include <stdio.h>
+	#include <cstdio>
 #endif
 
 static const float angular_steppings[] = {

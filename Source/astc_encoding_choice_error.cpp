@@ -41,10 +41,10 @@
 
 #include "astc_codec_internals.h"
 
-#include <math.h>
+#include <cmath>
 
 #ifdef DEBUG_PRINT_DIAGNOSTICS
-	#include <stdio.h>
+	#include <cstdio>
 #endif
 
 // helper function to merge two endpoint-colors

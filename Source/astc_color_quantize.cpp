@@ -13,14 +13,14 @@
  */ 
 /*----------------------------------------------------------------------------*/ 
 
-#include <stdio.h>
+#include <cstdio>
 
 #include "astc_codec_internals.h"
 #include "softfloat.h"
-#include <math.h>
+#include <cmath>
 
 #ifdef DEBUG_PRINT_DIAGNOSTICS
-	#include <stdio.h>
+	#include <cstdio>
 #endif
 
 /* 

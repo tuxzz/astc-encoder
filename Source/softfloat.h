@@ -27,7 +27,7 @@ extern "C"
 	/* if compiling as C++, we need to define these macros in order to obtain all the macros in stdint.h . */
 	#define __STDC_LIMIT_MACROS
 	#define __STDC_CONSTANT_MACROS
-	#include <stdint.h>
+	#include <cstdint>
 
 #else
 

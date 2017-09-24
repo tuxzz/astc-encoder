@@ -46,12 +46,12 @@
  * each element in the table is an uint8_t indicating partition index (0, 1, 2 or 3)
  */
 
-#include <math.h>
+#include <cmath>
 
 #include "astc_codec_internals.h"
 
 #ifdef DEBUG_PRINT_DIAGNOSTICS
-	#include <stdio.h>
+	#include <cstdio>
 #endif
 
 #include "mathlib.h"

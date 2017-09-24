@@ -18,9 +18,9 @@
 
 #include "astc_codec_internals.h"
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <math.h>
+#include <cstdio>
+#include <cstdlib>
+#include <cmath>
 
 #ifndef WIN32
 	#include <sys/time.h>
@@ -88,7 +88,7 @@
 		#define _GNU_SOURCE
 	#endif
 
-	#include <fenv.h>
+	#include <cfenv>
 #endif
 
 // Define this to be 1 to allow "illegal" block sizes

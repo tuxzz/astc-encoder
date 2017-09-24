@@ -16,7 +16,7 @@
 
 #include "astc_codec_internals.h"
 
-#include <math.h>
+#include <cmath>
 #include "mathlib.h"
 
 #ifdef DEBUG_CAPTURE_NAN
@@ -24,7 +24,7 @@
 		#define _GNU_SOURCE
 	#endif
 
-	#include <fenv.h>
+	#include <cfenv>
 #endif
 
 /* routines to compute average colors and dominant directions for blocks with 3 and 4 components. */

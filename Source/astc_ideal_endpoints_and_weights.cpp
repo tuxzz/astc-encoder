@@ -13,12 +13,12 @@
  */
 /*----------------------------------------------------------------------------*/
 
-#include <math.h>
+#include <cmath>
 
 #include "astc_codec_internals.h"
 
 #ifdef DEBUG_PRINT_DIAGNOSTICS
-#include <stdio.h>
+#include <cstdio>
 #endif
 
 
@@ -27,7 +27,7 @@
 		#define _GNU_SOURCE
 	#endif
 
-	#include <fenv.h>
+	#include <cfenv>
 #endif
 
 static void compute_endpoints_and_ideal_weights_1_component(int xdim, int ydim, int zdim, 

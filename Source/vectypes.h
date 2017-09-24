@@ -13,8 +13,8 @@
  */ 
 /*----------------------------------------------------------------------------*/ 
 
-#include <string.h>
-#include <stdint.h>
+#include <cstring>
+#include <cstdint>
 
 typedef unsigned int uint;
 typedef unsigned short ushort;

@@ -17,8 +17,8 @@
 
 #define ASTC_CODEC_INTERNALS_INCLUDED
 
-#include <stdint.h>
-#include <stdlib.h>
+#include <cstdint>
+#include <cstdlib>
 #include "mathlib.h"
 
 #ifndef MIN
