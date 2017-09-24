@@ -50,20 +50,18 @@ HEADERS = \
 
 OBJECTS = $(SOURCES:.cpp=.o)
 
-
-CPPFLAGS = -O3 -Wall -W -Wextra -msse2 -mfpmath=sse
-
+CXXFLAGS = -march=native -O3 -Wall -pipe
 
 astcenc: $(OBJECTS) stb_image.o
-	g++ -o $@ $^ $(CPPFLAGS) -lpthread
+	g++ -D_USE_MATH_DEFINES -std=c++14 -o $@ $^ $(CXXFLAGS) -lpthread -Wl,-O1,--as-needed
 
 
 $(OBJECTS): %.o: %.cpp $(HEADERS)
-	g++ -c -o $@ $< $(CPPFLAGS)
+	g++ -D_USE_MATH_DEFINES -std=c++14 -c -o $@ $< $(CXXFLAGS)
 
 
 stb_image.o: stb_image.c
-	g++ -c -o $@ $< $(CPPFLAGS)
+	gcc -D_USE_MATH_DEFINES -c -o $@ $< $(CXXFLAGS)
 
 
 clean:
