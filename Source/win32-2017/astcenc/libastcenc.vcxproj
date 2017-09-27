@@ -19,7 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
-    <ProjectGuid>{D6D60D86-0502-446A-8498-888F78B869C2}</ProjectGuid>
+    <ProjectGuid>{B597998D-6F7C-45E6-B5D2-518DB260DE0C}</ProjectGuid>
     <RootNamespace>astcenc</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.15063.0</WindowsTargetPlatformVersion>
@@ -32,7 +32,7 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <PlatformToolset>v141</PlatformToolset>
@@ -43,7 +43,7 @@
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
-    <ConfigurationType>Application</ConfigurationType>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v141</PlatformToolset>
   </PropertyGroup>
@@ -100,7 +100,7 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_USE_MATH_DEFINES;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILDING_DLL;WIN32;_USE_MATH_DEFINES;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -152,7 +152,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <AdditionalIncludeDirectories>$(ProjectDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
-      <PreprocessorDefinitions>WIN32;_USE_MATH_DEFINES;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>BUILDING_DLL;WIN32;_USE_MATH_DEFINES;NDEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <EnableEnhancedInstructionSet>NotSet</EnableEnhancedInstructionSet>
@@ -195,13 +195,13 @@
     <ClCompile Include="..\..\astc_integer_sequence.cpp" />
     <ClCompile Include="..\..\astc_kmeans_partitioning.cpp" />
     <ClCompile Include="..\..\astc_ktx_dds.cpp" />
+    <ClCompile Include="..\..\astc_lib.cpp" />
     <ClCompile Include="..\..\astc_partition_tables.cpp" />
     <ClCompile Include="..\..\astc_percentile_tables.cpp" />
     <ClCompile Include="..\..\astc_pick_best_endpoint_format.cpp" />
     <ClCompile Include="..\..\astc_quantization.cpp" />
     <ClCompile Include="..\..\astc_stb_tga.cpp" />
     <ClCompile Include="..\..\astc_symbolic_physical.cpp" />
-    <ClCompile Include="..\..\astc_toplevel.cpp" />
     <ClCompile Include="..\..\astc_weight_align.cpp" />
     <ClCompile Include="..\..\astc_weight_quant_xfer_tables.cpp" />
     <ClCompile Include="..\..\mathlib.cpp" />
@@ -209,6 +209,7 @@
     <ClCompile Include="..\..\stb_image.c" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\astc.h" />
     <ClInclude Include="..\..\astc_codec_internals.h" />
     <ClInclude Include="..\..\mathlib.h" />
     <ClInclude Include="..\..\softfloat.h" />
