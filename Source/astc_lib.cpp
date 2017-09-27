@@ -475,12 +475,13 @@ void store_astc_file(const astc_codec_image * input_image, int *out_width, int *
 	int yblocks = (ysize + ydim - 1) / ydim;
 	int zblocks = (zsize + zdim - 1) / zdim;
 
-	uint8_t *buffer = (uint8_t *) malloc(xblocks * yblocks * zblocks * 16);
+	uint8_t *data = (uint8_t *) malloc(sizeof(astc_header) + xblocks * yblocks * zblocks * 16);
 
 	*out_width = xsize;
 	*out_height = ysize;
-	*out_data = buffer;
-	*out_size = xblocks * yblocks * zblocks * 16;
+	*out_data = data;
+	*out_size = sizeof(astc_header) + xblocks * yblocks * zblocks * 16;
+  auto buffer = data + sizeof(astc_header);
 
 	if (!buffer)
 	{
