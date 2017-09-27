@@ -24,7 +24,7 @@ extern "C"
 
 #if defined __cplusplus && !defined(_MSC_VER)
 
-	/* if compiling as C++, we need to define these macros in order to obtain all the macros in stdint.h . */
+	/* if compiling as C++, we need to define these macros in order to obtain all the macros in cstdint . */
 	#define __STDC_LIMIT_MACROS
 	#define __STDC_CONSTANT_MACROS
 	#include <cstdint>
@@ -44,7 +44,7 @@ extern "C"
 uint32_t clz32(uint32_t p);
 
 
-/* targets that don't have UINT32_C probably don't have the rest of C99s stdint.h */
+/* targets that don't have UINT32_C probably don't have the rest of C99s cstdint */
 #ifndef UINT32_C
 
 	#define PASTE(a) a

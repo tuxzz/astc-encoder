@@ -1263,7 +1263,32 @@ void compute_error_metrics(int compute_hdr_error_metrics, int input_components, 
 	This image loader will choose one based on filename.
 */
 
+astc_codec_image *load_uncompressed_image(int padding, int *result, int width, int height, int stride, const char* format, unsigned char* pixels)
+{
+	astc_codec_image *astc_img = NULL;
+	astc_img = allocate_image(8, width, height, 1, padding);
+	bool y_flip = false;
 
+	for (int y = 0; y < height; y++)
+	{
+		int y_dst = y + padding;
+		int y_src = y_flip ? (height - y - 1) : y;
+		uint8_t *src = pixels + 4 * width * y_src;
+
+		for (int x = 0; x < width; x++)
+		{
+			int x_dst = x + padding;
+			astc_img->imagedata8[0][y_dst][4 * x_dst] = src[4 * x];
+			astc_img->imagedata8[0][y_dst][4 * x_dst + 1] = src[4 * x + 1];
+			astc_img->imagedata8[0][y_dst][4 * x_dst + 2] = src[4 * x + 2];
+			astc_img->imagedata8[0][y_dst][4 * x_dst + 3] = src[4 * x + 3];
+		}
+	}
+	fill_image_padding_area(astc_img);
+	int components = 4;
+	*result = components;
+	return astc_img;
+}
 
 astc_codec_image *astc_codec_load_image(const char *input_filename, int padding, int *load_result)
 {
@@ -1274,7 +1299,7 @@ astc_codec_image *astc_codec_load_image(const char *input_filename, int padding,
 
 	// check the ending of the input filename
 	int load_fileformat = LOAD_STB_IMAGE;
-	int filename_len = static_cast<int>(strlen(input_filename));
+	int filename_len = strlen(input_filename);
 
 	const char *eptr = input_filename + filename_len - 5;
 	if (eptr > input_filename && (strcmp(eptr, ".htga") == 0 || strcmp(eptr, ".HTGA") == 0))
@@ -1348,7 +1373,7 @@ int get_output_filename_enforced_bitness(const char *output_filename)
 	if (output_filename == NULL)
 		return -1;
 
-	int filename_len = static_cast<int>(strlen(output_filename));
+	int filename_len = strlen(output_filename);
 	const char *eptr = output_filename + filename_len - 5;
 
 	if (eptr > output_filename && (strcmp(eptr, ".htga") == 0 || strcmp(eptr, ".HTGA") == 0))
@@ -1382,7 +1407,7 @@ int astc_codec_store_image(const astc_codec_image * output_image, const char *ou
 	#define STORE_DDS 3
 	#define STORE_EXR 4
 
-	int filename_len = static_cast<int>(strlen(output_filename));
+	int filename_len = strlen(output_filename);
 
 	int store_fileformat = STORE_TGA;
 	const char *eptr = output_filename + filename_len - 5;

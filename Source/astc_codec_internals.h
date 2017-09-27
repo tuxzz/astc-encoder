@@ -588,6 +588,7 @@ astc_codec_image *load_tga_image(const char *tga_filename, int padding, int *res
 astc_codec_image *load_image_with_stb(const char *filename, int padding, int *result);
 
 astc_codec_image *astc_codec_load_image(const char *filename, int padding, int *result);
+astc_codec_image *load_uncompressed_image(int padding, int *result, int width, int height, int stride, const char* format, unsigned char* pixels);
 int astc_codec_unlink(const char *filename);
 
 // function to store image to file
