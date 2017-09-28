@@ -18,6 +18,7 @@
 
 #include "astc.h"
 #include "astc_codec_internals.h"
+#include "softfloat.h"
 
 #include <cstdio>
 #include <cstdlib>
@@ -513,6 +514,7 @@ void store_astc_file(const astc_codec_image * input_image, int *out_width, int *
 	hdr.zsize[0] = zsize & 0xFF;
 	hdr.zsize[1] = (zsize >> 8) & 0xFF;
 	hdr.zsize[2] = (zsize >> 16) & 0xFF;
+  memcpy(data, &hdr, sizeof(astc_header));
 
 	//FILE *wf = fopen(filename, "wb");
 	//fwrite(&hdr, 1, sizeof(astc_header), wf);
@@ -2505,3 +2507,9 @@ int astc_main(int argc, char **argv, int width, int height, int stride, const ch
 
 	return 0;
 }
+
+uint16_t astc_float_to_half(float f32)
+{ return float_to_sf16(f32, SF_NEARESTEVEN); }
+
+float astc_half_to_float(uint16_t f16)
+{ return sf16_to_float(f16); }
