@@ -1263,7 +1263,7 @@ void compute_error_metrics(int compute_hdr_error_metrics, int input_components, 
 	This image loader will choose one based on filename.
 */
 
-astc_codec_image *load_uncompressed_image(int padding, int *result, int width, int height, int stride, const char *format, void *pixels, int bitness)
+astc_codec_image *load_uncompressed_image(int padding, int *result, int width, int height, void *pixels, int bitness)
 {
 	astc_codec_image *astc_img = NULL;
 	astc_img = allocate_image(bitness, width, height, 1, padding);
@@ -1312,6 +1312,53 @@ astc_codec_image *load_uncompressed_image(int padding, int *result, int width, i
 	int components = 4;
 	*result = components;
 	return astc_img;
+}
+
+void store_uncompressed_image(int padding, astc_codec_image *astc_img, void *out)
+{
+  int bitness = astc_img->imagedata8 ? 8 : 16;
+  int width = astc_img->xsize;
+  int height = astc_img->ysize;
+  bool y_flip = false;
+
+  if(bitness == 8)
+  {
+    for(int y = 0; y < height; y++)
+    {
+      int y_dst = y + padding;
+      int y_src = y_flip ? (height - y - 1) : y;
+      uint8_t *dst = static_cast<uint8_t*>(out) + 4 * width * y_src;
+
+      for(int x = 0; x < width; x++)
+      {
+        int x_dst = x + padding;
+        dst[4 * x] = astc_img->imagedata8[0][y_dst][4 * x_dst];
+        dst[4 * x + 1] = astc_img->imagedata8[0][y_dst][4 * x_dst + 1];
+        dst[4 * x + 2] = astc_img->imagedata8[0][y_dst][4 * x_dst + 2];
+        dst[4 * x + 3] = astc_img->imagedata8[0][y_dst][4 * x_dst + 3];
+      }
+    }
+  }
+  else if(bitness == 16)
+  {
+    for(int y = 0; y < height; y++)
+    {
+      int y_dst = y + padding;
+      int y_src = y_flip ? (height - y - 1) : y;
+      uint16_t *dst = static_cast<uint16_t*>(out) + 4 * width * y_src;
+
+      for(int x = 0; x < width; x++)
+      {
+        int x_dst = x + padding;
+        dst[4 * x] = astc_img->imagedata16[0][y_dst][4 * x_dst];
+        dst[4 * x + 1] = astc_img->imagedata16[0][y_dst][4 * x_dst + 1];
+        dst[4 * x + 2] = astc_img->imagedata16[0][y_dst][4 * x_dst + 2];
+        dst[4 * x + 3] = astc_img->imagedata16[0][y_dst][4 * x_dst + 3];
+      }
+    }
+  }
+  else
+    std::abort();
 }
 
 astc_codec_image *astc_codec_load_image(const char *input_filename, int padding, int *load_result)

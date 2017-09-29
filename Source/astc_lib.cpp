@@ -191,31 +191,33 @@ struct astc_header
 int suppress_progress_counter = 0;
 int perform_srgb_transform = 0;
 
-astc_codec_image *load_astc_file(const char *filename, int bitness, astc_decode_mode decode_mode, swizzlepattern swz_decode)
+astc_codec_image *load_astc_file(uint8_t *data, int bitness, astc_decode_mode decode_mode, swizzlepattern swz_decode)
 {
 	int x, y, z;
-	FILE *f = fopen(filename, "rb");
+	/*FILE *f = fopen(filename, "rb");
 	if (!f)
 	{
 		printf("Failed to open file %s\n", filename);
 		exit(1);
-	}
+	}*/
 	astc_header hdr;
-	size_t hdr_bytes_read = fread(&hdr, 1, sizeof(astc_header), f);
+  memcpy(&hdr, data, sizeof(astc_header));
+	/*size_t hdr_bytes_read = fread(&hdr, 1, sizeof(astc_header), f);
 	if (hdr_bytes_read != sizeof(astc_header))
 	{
 		fclose(f);
 		printf("Failed to read file %s\n", filename);
 		exit(1);
-	}
+	}*/
 
 	uint32_t magicval = hdr.magic[0] + 256 * (uint32_t) (hdr.magic[1]) + 65536 * (uint32_t) (hdr.magic[2]) + 16777216 * (uint32_t) (hdr.magic[3]);
 
 	if (magicval != MAGIC_FILE_CONSTANT)
 	{
-		fclose(f);
-		printf("File %s not recognized\n", filename);
-		exit(1);
+		//fclose(f);
+		printf("input data is not recognized\n");
+		//exit(1);
+    return nullptr;
 	}
 
 	int xdim = hdr.blockdim_x;
@@ -224,9 +226,10 @@ astc_codec_image *load_astc_file(const char *filename, int bitness, astc_decode_
 
 	if (xdim < 3 || xdim > 12 || ydim < 3 || ydim > 12 || (zdim < 3 && zdim != 1) || zdim > 12)
 	{
-		fclose(f);
-		printf("File %s not recognized %d %d %d\n", filename, xdim, ydim, zdim);
-		exit(1);
+		//fclose(f);
+		printf("input data is not recognized %d %d %d\n", xdim, ydim, zdim);
+		//exit(1);
+    return nullptr;
 	}
 
 
@@ -239,7 +242,7 @@ astc_codec_image *load_astc_file(const char *filename, int bitness, astc_decode_
 	int yblocks = (ysize + ydim - 1) / ydim;
 	int zblocks = (zsize + zdim - 1) / zdim;
 
-	uint8_t *buffer = (uint8_t *) malloc(xblocks * yblocks * zblocks * 16);
+	/*uint8_t *buffer = (uint8_t *) malloc(xblocks * yblocks * zblocks * 16);
 	if (!buffer)
 	{
 		fclose(f);
@@ -253,8 +256,8 @@ astc_codec_image *load_astc_file(const char *filename, int bitness, astc_decode_
 	{
 		printf("Failed to read file %s\n", filename);
 		exit(1);
-	}
-
+	}*/
+  uint8_t *buffer = data + sizeof(astc_header);
 
 	astc_codec_image *img = allocate_image(bitness, xsize, ysize, zsize, 0);
 	initialize_image(img);
@@ -272,8 +275,6 @@ astc_codec_image *load_astc_file(const char *filename, int bitness, astc_decode_
 				decompress_symbolic_block(decode_mode, xdim, ydim, zdim, x * xdim, y * ydim, z * zdim, &scb, &pb);
 				write_imageblock(img, &pb, xdim, ydim, zdim, x * xdim, y * ydim, z * zdim, swz_decode);
 			}
-
-	free(buffer);
 
 	return img;
 }
@@ -465,8 +466,7 @@ void encode_astc_image(const astc_codec_image * input_image,
 }
 
 
-void store_astc_file(const astc_codec_image * input_image, int *out_width, int *out_height,
-	int *out_size, void **out_data, int xdim, int ydim, int zdim, const error_weighting_params * ewp, astc_decode_mode decode_mode, swizzlepattern swz_encode, int threadcount)
+void store_astc_file(const astc_codec_image * input_image, void *out_data, int xdim, int ydim, int zdim, const error_weighting_params * ewp, astc_decode_mode decode_mode, swizzlepattern swz_encode, int threadcount)
 {
 	int xsize = input_image->xsize;
 	int ysize = input_image->ysize;
@@ -475,13 +475,8 @@ void store_astc_file(const astc_codec_image * input_image, int *out_width, int *
 	int xblocks = (xsize + xdim - 1) / xdim;
 	int yblocks = (ysize + ydim - 1) / ydim;
 	int zblocks = (zsize + zdim - 1) / zdim;
-
-	uint8_t *data = (uint8_t *) malloc(sizeof(astc_header) + xblocks * yblocks * zblocks * 16);
-
-	*out_width = xsize;
-	*out_height = ysize;
-	*out_data = data;
-	*out_size = sizeof(astc_header) + xblocks * yblocks * zblocks * 16;
+   
+  auto data = static_cast<uint8_t*>(out_data);
   auto buffer = data + sizeof(astc_header);
 
 	if (!buffer)
@@ -718,7 +713,7 @@ void dump_image(astc_codec_image * img)
 }
 
 
-int astc_main(int argc, char **argv, int width, int height, int stride, const char *format, void *pixels, int *out_width, int *out_height, int *out_size, void **out_data)
+int astc_main(int argc, char **argv, int width, int height, void *inputData, void *out_data)
 {
 	int i;
 
@@ -2296,7 +2291,7 @@ int astc_main(int argc, char **argv, int width, int height, int stride, const ch
 			if (array_size == 1)
 			{
 				//input_images[image_index] = astc_codec_load_image(input_filename, padding, &load_results[image_index]);
-				input_images[image_index] = load_uncompressed_image(padding, &load_results[image_index], width, height, stride, format, pixels, bitness);
+				input_images[image_index] = load_uncompressed_image(padding, &load_results[image_index], width, height, inputData, bitness);
 			}
 
 			// 3D input data - multiple 2D images.
@@ -2438,8 +2433,20 @@ int astc_main(int argc, char **argv, int width, int height, int stride, const ch
 
 	start_coding_time = get_time();
 
-	//if (opmode == 1)
-	//	output_image = load_astc_file(input_filename, bitness, decode_mode, swz_decode);
+  if(opmode == 1)
+  {
+    output_image = load_astc_file(static_cast<uint8_t*>(inputData), bitness, decode_mode, swz_decode);
+    if(output_image)
+    {
+      store_uncompressed_image(padding, output_image, out_data);
+      destroy_image(output_image);
+    }
+    else
+    {
+      return 1;
+      destroy_image(output_image);
+    }
+  }
 
 
 	// process image, if relevant
@@ -2454,9 +2461,7 @@ int astc_main(int argc, char **argv, int width, int height, int stride, const ch
 	if (opmode == 2)
 	{
 		if (psnrmode == 1)
-		{
 			compute_error_metrics(input_image_is_hdr, input_components, input_image, output_image, low_fstop, high_fstop, psnrmode);
-		}
 	}
 
 
@@ -2482,10 +2487,7 @@ int astc_main(int argc, char **argv, int width, int height, int stride, const ch
 		//}
 	}
 	if (opmode == 0)
-	{
-		store_astc_file(input_image, out_width, out_height, out_size, out_data, xdim, ydim, zdim, &ewp, decode_mode, swz_encode, thread_count);
-		
-	}
+		store_astc_file(input_image, out_data, xdim, ydim, zdim, &ewp, decode_mode, swz_encode, thread_count);
 
 
 	if (print_block_mode_histogram)
@@ -2499,6 +2501,14 @@ int astc_main(int argc, char **argv, int width, int height, int stride, const ch
 
 
 	end_time = get_time();
+  if(opmode == 0 || opmode == 2 || opmode == 3)
+  {
+    for(int image_index = 0; image_index < array_size; image_index++)
+    {
+      if(array_size == 1)
+        destroy_image(input_images[image_index]);
+    }
+  }
 
 	if (timemode)
 	{
@@ -2506,6 +2516,23 @@ int astc_main(int argc, char **argv, int width, int height, int stride, const ch
 	}
 
 	return 0;
+}
+
+int astc_calc_compressed_size(int width, int height, int blockWidth, int blockHeight)
+{
+  int xblocks = (width + blockWidth - 1) / blockWidth;
+  int yblocks = (height + blockHeight - 1) / blockHeight;
+  return sizeof(astc_header) + xblocks * yblocks * 16;
+}
+
+astc_header_info astc_get_header_info(void *inputData)
+{
+  astc_header hdr;
+  memcpy(&hdr, inputData, sizeof(astc_header));
+  int xsize = hdr.xsize[0] + 256 * hdr.xsize[1] + 65536 * hdr.xsize[2];
+  int ysize = hdr.ysize[0] + 256 * hdr.ysize[1] + 65536 * hdr.ysize[2];
+  int zsize = hdr.zsize[0] + 256 * hdr.zsize[1] + 65536 * hdr.zsize[2];
+  return {xsize, ysize, hdr.blockdim_x, hdr.blockdim_y};
 }
 
 uint16_t astc_float_to_half(float f32)
